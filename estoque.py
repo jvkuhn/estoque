@@ -29,7 +29,9 @@ def atualizar_tabela():
     tabela.delete(*tabela.get_children())
     for item in lista_estoque:
         produto, quantidade, valor, valor_estoque = item
-        tabela.insert('', 'end', values=(produto, quantidade, valor, valor_estoque))
+        valor_formatado = "{:.2f}".format(valor)
+        valorestoque_formatado = "{:.2f}".format(valor_estoque)
+        tabela.insert('', 'end', values=(produto, quantidade, valor_formatado, valorestoque_formatado))
 
 def limpar_campos():
     nome_produto.set('')
@@ -81,27 +83,14 @@ def salvar_e_sair():
     df.to_csv(arquivo_csv, index=False)
     root.destroy()
 
-def categorizar_produto(produto):
-    # Esta função pode ser personalizada para categorizar produtos com base em nomes, palavras-chave, etc.
-    if "eletrônico" in produto.lower():
-        return "Eletrônicos"
-    elif "roupa" in produto.lower():
-        return "Roupas"
-    elif "alimento" in produto.lower():
-        return "Alimentos"
-    else:
-        return "Outros"
-    
 root = tk.Tk()
 root.title("Controle de Estoque")
-root.geometry("1080x720")  # Defina a resolução da janela
+root.geometry("1080x720")
 
-# Impede que a janela seja redimensionável
 root.resizable(False, False)
 
-# Configurando um estilo "dark mode"
 style = ttk.Style()
-style.theme_use("clam")  # Escolha um tema que funcione bem com o "dark mode"
+style.theme_use("clam")
 style.configure("Treeview", background="#333", fieldbackground="#333", foreground="white", rowheight=25)
 style.configure("TButton", background="#444", foreground="white")
 style.map("TButton",
@@ -127,7 +116,6 @@ tk.Button(root, text="Calcular Valor Total de Estoque", command=exibir_valor_tot
 frame = tk.Frame(root)
 frame.grid(row=4, column=0, columnspan=2)
 
-# Adicione uma barra de rolagem vertical
 scrollbar = ttk.Scrollbar(frame, orient="vertical")
 scrollbar.pack(side="right", fill="y")
 
@@ -139,7 +127,6 @@ tabela.heading('#3', text='Valor')
 tabela.heading('#4', text='Valor em Estoque')
 tabela.pack(fill='both', expand=1)
 
-# Conecte a barra de rolagem à tabela
 scrollbar.config(command=tabela.yview)
 carregar_estoque()
 root.mainloop()
